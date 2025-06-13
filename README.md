@@ -1,2 +1,0 @@
-Valerina cappucina
-a
