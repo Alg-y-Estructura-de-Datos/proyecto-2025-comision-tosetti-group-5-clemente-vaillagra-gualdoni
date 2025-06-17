@@ -79,8 +79,33 @@ vector<Venta> cargarVentasDesdeCSV(const string& nombreArchivo) {
 
     ventas.push_back(venta);
 }
-
-
     archivo.close();
     return ventas;
+}
+void guardarVentasEnCSV(const string& nombreArchivo, const vector<Venta>& ventas) {
+    ofstream archivo(nombreArchivo);
+    if (!archivo.is_open()) {
+        cerr << "No se pudo abrir el archivo para escribir: " << nombreArchivo << endl;
+        return;
+    }
+
+    archivo << "ID_Venta;Fecha;País;Ciudad;Cliente;Producto;Categoría;Cantidad;Precio_Unitario;Monto_Total;Medio_Envio;Estado_Envio\n";
+
+    for (const Venta& venta : ventas) {
+        archivo << venta.idVenta << ";"
+                << venta.fecha << ";"
+                << venta.pais << ";"
+                << venta.ciudad << ";"
+                << venta.cliente << ";"
+                << venta.producto << ";"
+                << venta.categoria << ";"
+                << venta.cantidad << ";"
+                << venta.precioUnitario << ";"
+                << venta.montoTotal << ";"
+                << venta.medioEnvio << ";"
+                << venta.estadoEnvio << "\n";
+    }
+
+    archivo.close();
+    cout << "Datos guardados correctamente en " << nombreArchivo << endl;
 }

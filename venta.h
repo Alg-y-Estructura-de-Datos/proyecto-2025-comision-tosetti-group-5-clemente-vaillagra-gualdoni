@@ -20,4 +20,6 @@ struct Venta {
     string estadoEnvio;
 };
 
+
+
 #endif

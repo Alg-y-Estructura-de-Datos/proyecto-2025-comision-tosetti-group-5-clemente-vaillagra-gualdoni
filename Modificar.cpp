@@ -10,11 +10,37 @@ using namespace std;
 
 void agregarVenta(vector<Venta>& ventas) {
     Venta v;
+    string input;
+    bool duplicate = true;
     cout<<"\n=== Agregar Nueva Venta ==="<<endl;
-    cout<<"ID Venta: ";
-    cin>>v.idVenta;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    cout<<"Fecha (dd/mm/aaaa): ";
+    while (duplicate==true) {
+        cout<<"ID Venta: ";
+        cin>>v.idVenta;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        
+        for (const auto& venta : ventas) {
+            if (venta.idVenta != v.idVenta) {
+                duplicate = false;
+            }
+            else{
+                duplicate = true;
+                break;
+            }
+        }
+        if (duplicate) {
+            cout<<"Error: El ID '"<<v.idVenta<<"' ya existe.\n";
+            cout<<"1-->Ingresar otro ID\n2-->Para abortar operación ingrese R\nOpción: ";
+            if (input == "r" || input=="R") {
+                cout<<"Operación abortada.\n"<<endl;
+                return;
+            }
+            getline(cin, input);
+            continue;
+        }
+        break;
+    }
+
+    cout<<"Fecha en el siguiente formato(2024-12-31): ";
     getline(cin, v.fecha);
     cout<<"País: ";
     getline(cin, v.pais);
@@ -40,19 +66,29 @@ void agregarVenta(vector<Venta>& ventas) {
     ventas.push_back(v);
     cout<<"\nVenta agregada correctamente!\n"<<endl;
 }
+
 void eliminarVenta(vector<Venta>& ventas) {
-    int a=4;
-    char criterio;
-    string valor;
+    int a=4, criterio;
+    string valor, aux;
     cout<<"\n=== Eliminar Venta ==="<<endl;
-    cout<<"¿Eliminar por\n1-->Pais\n2-->Ciudad? :";
+    cout<<"¿Eliminar por\n1-->País\n2-->Ciudad\nOpción:";
     cin>>criterio;
+    while(criterio != 1 && criterio != 2){
+        cout<<"Término inválido. Reingrese nuevamente: ";
+        cin>>criterio;
+    }
+    if(criterio == 1){
+        aux = "país";
+    }
+    else{
+        aux = "ciudad";
+    }
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    cout<<"Ingrese "<<criterio<<": ";
+    cout<<"Ingrese "<<aux<<": ";
     getline(cin, valor);
     vector<int> indices;
     for (size_t i = 0; i < ventas.size(); ++i) {
-        if ((criterio == '1' && ventas[i].pais == valor) || (criterio == '2' && ventas[i].ciudad == valor)) {
+        if ((criterio == 1 && ventas[i].pais == valor) || (criterio == 2 && ventas[i].ciudad == valor)) {
             indices.push_back(i);
             cout<<indices.size()<<". ID="<<ventas[i].idVenta
                 <<" | "<<ventas[i].pais<<" / "<<ventas[i].ciudad
@@ -63,19 +99,23 @@ void eliminarVenta(vector<Venta>& ventas) {
         cout<<"No se encontraron ventas para '"<<valor<<"'.\n";
         return;
     }
-    int opcion;
-    cout<<"Selecciona el número de la venta a eliminar: ";
-    cin>>opcion;
-    while(opcion < 1 || opcion > static_cast<int>(indices.size())){
-        a-=1;
-        cout<<"Opción inválida. No se eliminó ninguna venta. reingrese nuevamente.\nQuedan ["<<a<<"intentos: ";
-        cin>>opcion;
-        if(a<1){
-            return;
+    string idVentaEliminar;
+    cout << "Selecciona el ID de la venta a eliminar: ";
+    cin >> idVentaEliminar;
+
+    bool eliminado = false;
+    for (size_t i = 0; i < ventas.size(); ++i) {
+        if (ventas[i].idVenta==idVentaEliminar){
+            ventas.erase(ventas.begin() + i);
+            cout << "Venta eliminada.\n";
+            eliminado = true;
+            break;
         }
     }
-    ventas.erase(ventas.begin() + indices[opcion - 1]);
-    cout<<"Venta eliminada correctamente!\n"<<endl;
+    if (!eliminado) {
+        cout << "No se encontró la venta con ID " << idVentaEliminar << ".\n";
+        return;
+    }
 }
 
 void modificarVenta(vector<Venta>& ventas) {
